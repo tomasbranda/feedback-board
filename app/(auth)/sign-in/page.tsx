@@ -1,35 +1,24 @@
 "use client";
+import { signIn } from "@/app/actions/user";
+import SpinnerIcon from "@/app/components/SpinnerIcon";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useActionState, useEffect } from "react";
 
 const SignIn = () => {
   const { data: session } = authClient.useSession();
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const [state, formAction, isPending] = useActionState(signIn, {
+    error: null,
+    shouldRedirect: false,
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    const { data, error } = await authClient.signIn.email(
-      {
-        email,
-        password,
-      },
-      {
-        onSuccess: () => {
-          router.push("/dashboard");
-        },
-        onError: (ctx) => {
-          setError(ctx.error.message);
-        },
-      }
-    );
-  };
+  useEffect(() => {
+    if (state.shouldRedirect) {
+      router.push("/dashboard");
+    }
+  }, [state.shouldRedirect, router]);
 
   return (
     <>
@@ -45,7 +34,7 @@ const SignIn = () => {
           </h2>
 
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form action={formAction}>
               <div>
                 <label
                   htmlFor="email"
@@ -64,7 +53,7 @@ const SignIn = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="mt-4">
                 <label
                   htmlFor="password"
                   className="block text-sm/6 font-medium text-gray-900">
@@ -81,12 +70,20 @@ const SignIn = () => {
                   />
                 </div>
               </div>
-              {error && <p className="text-red-500">{error}</p>}
+              {state.error && (
+                <p className="text-red-500 mt-2 font-semibold text-center">
+                  {state.error}
+                </p>
+              )}
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-violet-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-violet-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 cursor-pointer">
-                  Sign in
+                  className="flex w-full justify-center rounded-md bg-violet-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-violet-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 cursor-pointer mt-8">
+                  {isPending ? (
+                    <SpinnerIcon className="size-6 inline-block center" />
+                  ) : (
+                    "Sign in"
+                  )}
                 </button>
               </div>
             </form>

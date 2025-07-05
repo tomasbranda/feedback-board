@@ -2,36 +2,23 @@
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState, useEffect } from "react";
+import SpinnerIcon from "@/app/components/SpinnerIcon";
+import { signUp } from "@/app/actions/user";
 
 export default function SignUp() {
   const { data: session } = authClient.useSession();
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const [state, formAction, isPending] = useActionState(signUp, {
+    error: null,
+    shouldRedirect: false,
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    const { data, error } = await authClient.signUp.email(
-      {
-        name,
-        email,
-        password,
-      },
-      {
-        onSuccess: () => {
-          router.push("/dashboard");
-        },
-        onError: (ctx) => {
-          setError(ctx.error.message);
-        },
-      }
-    );
-  };
+  useEffect(() => {
+    if (state.shouldRedirect) {
+      router.push("/dashboard");
+    }
+  }, [state.shouldRedirect, router]);
 
   return (
     <>
@@ -47,7 +34,7 @@ export default function SignUp() {
           </h2>
 
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form action={formAction} className="space-y-6">
               <div>
                 <label
                   htmlFor="name"
@@ -102,12 +89,20 @@ export default function SignUp() {
                   />
                 </div>
               </div>
-              {error && <p className="text-red-500">{error}</p>}
+              {state.error && (
+                <p className="text-red-500 mt-2 font-semibold text-center">
+                  {state.error}
+                </p>
+              )}
               <div>
                 <button
                   type="submit"
                   className="flex w-full justify-center rounded-md bg-violet-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-violet-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 cursor-pointer">
-                  Sign up
+                  {isPending ? (
+                    <SpinnerIcon className="size-6 inline-block center" />
+                  ) : (
+                    "Sign up"
+                  )}
                 </button>
               </div>
             </form>
