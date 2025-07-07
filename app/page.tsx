@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import previewImage from "@/public/preview.png";
+import Image from "next/image";
 
 const Home = async () => {
   return (
@@ -39,9 +40,11 @@ const Home = async () => {
           <div className="mx-auto mt-16 flex max-w-2xl sm:mt-24 lg:mt-0 lg:mr-0 lg:ml-10 lg:max-w-none lg:flex-none xl:ml-32">
             <div className="max-w-3xl flex-none sm:max-w-5xl lg:max-w-none">
               <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-gray-900/10 ring-inset lg:-m-4 lg:rounded-2xl lg:p-4 lg:animate-fade-in-left">
-                <img
+                <Image
                   alt="App screenshot"
                   src={previewImage.src}
+                  width={939}
+                  height={778}
                   className=" rounded-md ring-1 shadow-2xl ring-gray-900/10"
                 />
               </div>
