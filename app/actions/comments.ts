@@ -19,28 +19,28 @@ export const addComment = async (
   prevState: AddCommentState,
   formData: FormData
 ): Promise<AddCommentState> => {
-  const postId = Number(formData.get("postId"));
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) redirect("/sign-in");
-
-  const formSchema = z.object({
-    content: z
-      .string()
-      .min(3, "Comment must be at least 3 characters.")
-      .max(512, "Comment must be at most 512 characters."),
-  });
-
-  const formDataObj = {
-    content: formData.get("content"),
-  };
-
-  const parse = formSchema.safeParse(formDataObj);
-
   try {
+    const postId = Number(formData.get("postId"));
+
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) redirect("/sign-in");
+
+    const formSchema = z.object({
+      content: z
+        .string()
+        .min(3, "Comment must be at least 3 characters.")
+        .max(512, "Comment must be at most 512 characters."),
+    });
+
+    const formDataObj = {
+      content: formData.get("content"),
+    };
+
+    const parse = formSchema.safeParse(formDataObj);
+
     if (!parse.success) {
       const flattened = z.flattenError(parse.error);
       const errorMessage =
@@ -70,26 +70,35 @@ export const addComment = async (
 };
 
 export const deleteComment = async (commentId: number) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
-  if (!session) redirect("/sign-in");
+    if (!session) redirect("/sign-in");
 
-  const userId = session.user.id;
+    const userId = session.user.id;
 
-  const [userComment] = await db
-    .select()
-    .from(comment)
-    .where(and(eq(comment.id, commentId), eq(comment.userId, userId)))
-    .limit(1);
+    const [userComment] = await db
+      .select()
+      .from(comment)
+      .where(and(eq(comment.id, commentId), eq(comment.userId, userId)))
+      .limit(1);
 
-  if (!userComment) {
-    // TODO: Come up with better solution
-    alert("Unauthorized: You do not have permission to delete this comment.");
-    return;
+    if (!userComment) {
+      return {
+        success: false,
+        error: "You do not have permission to delete this comment.",
+      };
+    }
+
+    await db.delete(comment).where(eq(comment.id, commentId));
+    revalidatePath(`/dashboard/post/${userComment.postId}`);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: "An error occurred while deleting the comment.",
+    };
   }
-
-  await db.delete(comment).where(eq(comment.id, commentId));
-  revalidatePath(`/dashboard/post/${userComment.postId}`);
 };

@@ -1,14 +1,15 @@
 "use client";
 
+import { toast } from "react-toastify";
 import { deleteComment } from "../actions/comments";
 import TrashcanIcon from "./TrashcanIcon";
 
 const DeleteCommentBtn = ({ commentId }: { commentId: number }) => {
   const handleClick = async () => {
-    const confirmation = confirm(
-      "Are you sure you want to delete this comment?"
-    );
-    if (confirmation) await deleteComment(commentId);
+    const res = await deleteComment(commentId);
+    if (!res.success) {
+      toast.error(res.error || "Something went wrong.");
+    }
   };
 
   return (

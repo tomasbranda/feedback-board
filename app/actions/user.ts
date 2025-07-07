@@ -11,10 +11,10 @@ export const signIn = async (
   prevState: SignState,
   formData: FormData
 ): Promise<SignState> => {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
   try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
     await auth.api.signInEmail({
       body: {
         email,
@@ -36,11 +36,11 @@ export const signUp = async (
   prevState: SignState,
   formData: FormData
 ): Promise<SignState> => {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const name = formData.get("name") as string;
-
   try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const name = formData.get("name") as string;
+
     await auth.api.signUpEmail({
       body: {
         email,

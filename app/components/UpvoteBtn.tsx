@@ -1,7 +1,7 @@
 "use client";
-import { useTransition } from "react";
 import { upvotePost } from "../actions/posts";
 import ArrowIcon from "./ArrowIcon";
+import { toast } from "react-toastify";
 
 const UpvoteBtn = ({
   postId,
@@ -10,20 +10,16 @@ const UpvoteBtn = ({
   postId: number;
   hasUpvoted: boolean;
 }) => {
-  const [isPending, startTransition] = useTransition();
-
-  const handleClick = () => {
-    startTransition(async () => {
-      await upvotePost(postId);
-    });
+  const handleClick = async () => {
+    const res = await upvotePost(postId);
+    if (!res.success) {
+      toast.error(res.error || "Something went wrong.");
+    }
   };
 
   return (
     <>
-      <button
-        onClick={handleClick}
-        disabled={isPending}
-        className="cursor-pointer">
+      <button onClick={handleClick} className="cursor-pointer">
         {hasUpvoted ? (
           <ArrowIcon
             stroke="#8e51ff"
