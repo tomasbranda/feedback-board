@@ -5,7 +5,7 @@ import DashboardHeader from "../components/DashboardHeader";
 import SignOutBtn from "../components/SignOutBtn";
 import { db } from "@/db/drizzle";
 import { comment, post, tag, upvote, user } from "@/db/schema";
-import { count, countDistinct, desc, eq, ilike } from "drizzle-orm";
+import { countDistinct, desc, eq } from "drizzle-orm";
 import TopButton from "../components/TopButton";
 import { Metadata } from "next";
 

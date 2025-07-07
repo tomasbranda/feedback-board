@@ -16,7 +16,6 @@ interface Post {
   upvoteCount: number;
   commentCount: number;
 }
-[];
 
 const PostList = async ({
   posts,

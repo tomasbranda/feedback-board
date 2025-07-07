@@ -17,7 +17,6 @@ interface Post {
   upvoteCount: number;
   commentCount: number;
 }
-[];
 
 const DashboardPost = ({ post }: { post: Post }) => {
   return (

@@ -24,7 +24,7 @@ const SignIn = () => {
     <>
       {session ? (
         <>
-          <p>You're already signed in as {session.user.name}</p>
+          <p>You&apos;re already signed in as {session.user.name}</p>
           <Link href="/dashboard">Go to dashboard</Link>
         </>
       ) : (
@@ -89,7 +89,7 @@ const SignIn = () => {
             </form>
 
             <p className="mt-10 text-center text-sm/6 text-gray-500">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href="sign-up"
                 className="font-semibold text-violet-600 hover:text-violet-500">

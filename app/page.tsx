@@ -25,10 +25,10 @@ const Home = async () => {
               Build Better Apps Together
             </h1>
             <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8 lg:opacity-0 lg:animate-[2s_ease-in-out_1.5s_forwards_fade-in-up] ">
-              Unleash your team’s creativity with a shared space for ideas,
-              feedback, and collaboration. Whether you're brainstorming features
-              or refining user flows, this app keeps everyone aligned and
-              inspired from concept to launch.
+              Unleash your team&apos;s creativity with a shared space for ideas,
+              feedback, and collaboration. Whether you&apos;re brainstorming
+              features or refining user flows, this app keeps everyone aligned
+              and inspired from concept to launch.
             </p>
             <Link
               href="/dashboard"

@@ -12,7 +12,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import DeletePostBtn from "@/app/components/DeletePostBtn";
 import { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Post | Feedback Board",

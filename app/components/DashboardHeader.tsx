@@ -20,7 +20,6 @@ interface Post {
   upvoteCount: number;
   commentCount: number;
 }
-[];
 
 const DashboardHeader = ({ posts }: { posts: Post[] }) => {
   const [open, setOpen] = useState(false);

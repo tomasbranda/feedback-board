@@ -24,7 +24,7 @@ export default function SignUp() {
     <>
       {session ? (
         <>
-          <p>You're already signed in as {session.user.name}</p>
+          <p>You&apos;re already signed in as {session.user.name}</p>
           <Link href="/dashboard">Go to dashboard</Link>
         </>
       ) : (
