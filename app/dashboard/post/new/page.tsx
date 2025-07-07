@@ -2,7 +2,12 @@ import ArrowIcon from "@/app/components/ArrowIcon";
 import NewPostForm from "@/app/components/NewPostForm";
 import { db } from "@/db/drizzle";
 import { tag } from "@/db/schema";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "New post | Feedback Board",
+};
 
 const NewPost = async () => {
   const tags = await db.select().from(tag);

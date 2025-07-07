@@ -11,6 +11,12 @@ import DemotePostBtn from "@/app/components/DemotePostBtn";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import DeletePostBtn from "@/app/components/DeletePostBtn";
+import { Metadata } from "next";
+import { notFound, redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Post | Feedback Board",
+};
 
 export default async function Post({
   params,
@@ -45,6 +51,10 @@ export default async function Post({
     .where(eq(post.id, postId))
     .groupBy(post.id, user.id, tag.id);
 
+  if (!postData) {
+    return notFound();
+  }
+
   let color: string;
   switch (postData.status) {
     case "planned":
@@ -73,12 +83,14 @@ export default async function Post({
         <div className={`h-2 ${color}`}></div>
         <div className="p-6">
           <div className="flex justify-between">
-            <h2 className="font-extrabold text-lg">{postData.title}</h2>
-            {session?.user.id === postData.author?.id && (
+            <div>
+              <h2 className="font-extrabold text-lg">{postData.title}</h2>
+              <p className="text-sm">by {postData.author?.name}</p>
+            </div>
+            {session?.user && session?.user.id === postData.author?.id && (
               <DeletePostBtn postId={postData.id} />
             )}
           </div>
-          <p className="text-sm">by {postData.author?.name}</p>
           <p className="text-slate-800 my-4">{postData.content}</p>
           <div className="bg-sky-100 text-blue-500 py-2 px-3 inline-block rounded-xl font-semibold text-sm mb-4">
             <Link

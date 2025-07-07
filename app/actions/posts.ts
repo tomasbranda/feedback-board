@@ -10,13 +10,12 @@ import { redirect } from "next/navigation";
 import { z } from "zod/v4";
 
 type PostFormState = {
-  success?: boolean;
+  success?: boolean | null;
   errors: {
     title?: string[];
     tagId?: string[];
     description?: string[];
   } | null;
-  shouldRedirect?: boolean;
 };
 export const addPost = async (
   prevState: PostFormState,
@@ -59,11 +58,10 @@ export const addPost = async (
     return {
       success: true,
       errors: null,
-      shouldRedirect: true,
     };
   } catch (error) {
-    console.error("Error:", error);
     return {
+      success: false,
       errors: null,
     };
   }
@@ -145,31 +143,56 @@ export const movePost = async (
   revalidatePath(`/dashboard`);
 };
 
-export const deletePost = async (postId: number) => {
+type DeletePostState = {
+  message: string;
+  status: string;
+  redirect?: string | null;
+};
+
+export const deletePost = async (
+  prevState: DeletePostState,
+  formData: FormData
+): Promise<DeletePostState> => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session) redirect("/sign-in");
-
-  const userId = session.user.id;
-
-  const [userPost] = await db
-    .select()
-    .from(post)
-    .where(and(eq(post.id, postId), eq(post.userId, userId)))
-    .limit(1);
-
-  console.log(userPost);
-
-  if (!userPost) {
-    // TODO: Come up with better solution
-    alert("Unauthorized: You do not have permission to delete this post.");
-    return;
+  if (!session) {
+    console.log("You must be signed in to delete a post.");
+    return {
+      message: "You must be signed in to delete a post.",
+      status: "error",
+      redirect: "/sign-in",
+    };
   }
 
-  await db.delete(post).where(eq(post.id, postId));
-  revalidatePath(`/dashboard/post/${postId}`);
-  revalidatePath(`/dashboard`);
-  redirect("/dashboard");
+  try {
+    const postId = Number(formData.get("postId")) as number;
+
+    const userId = session.user.id;
+    const [userPost] = await db
+      .select()
+      .from(post)
+      .where(and(eq(post.id, postId), eq(post.userId, userId)))
+      .limit(1);
+
+    if (!userPost) {
+      return {
+        message: "You do not have permission to delete this post.",
+        status: "error",
+      };
+    }
+
+    await db.delete(post).where(eq(post.id, postId));
+    return {
+      message: "Post deleted successfully.",
+      redirect: "/dashboard",
+      status: "success",
+    };
+  } catch (error) {
+    return {
+      message: "An error occurred while deleting the post.",
+      status: "error",
+    };
+  }
 };

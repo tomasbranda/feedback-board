@@ -3,7 +3,12 @@ import RoadmapPost from "@/app/components/RoadmapPost";
 import { db } from "@/db/drizzle";
 import { comment, post, tag, upvote, user } from "@/db/schema";
 import { count, countDistinct, desc, eq, isNotNull } from "drizzle-orm";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Roadmap | Feedback Board",
+};
 
 const Roadmap = async () => {
   const posts = await db

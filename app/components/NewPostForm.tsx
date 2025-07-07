@@ -3,18 +3,23 @@ import { addPost } from "../actions/posts";
 import { Suspense, useActionState, useEffect } from "react";
 import NewPostSelect from "./NewPostSelect";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const NewPostForm = ({ tags }: { tags: { id: number; name: string }[] }) => {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(addPost, {
     errors: null,
-    success: false,
-    shouldRedirect: false,
+    success: null,
   });
 
   useEffect(() => {
-    if (state.shouldRedirect) {
+    if (state.success) {
+      toast.success("Post added successfully");
       router.push("/dashboard");
+    } else if (state.success === null && state.errors === null) {
+      return;
+    } else if (!state.success && !state.errors) {
+      toast.error("Something went wrong!");
     }
   }, [state, router]);
 

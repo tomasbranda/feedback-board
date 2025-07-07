@@ -6,6 +6,12 @@ import SignOutBtn from "../components/SignOutBtn";
 import { db } from "@/db/drizzle";
 import { comment, post, tag, upvote, user } from "@/db/schema";
 import { count, countDistinct, desc, eq, ilike } from "drizzle-orm";
+import TopButton from "../components/TopButton";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard | Feedback Board",
+};
 
 const Dashboard = async ({
   searchParams,
@@ -26,10 +32,10 @@ const Dashboard = async ({
       orderByClause = post.createdAt;
       break;
     case "upvotes":
-      orderByClause = desc(count(upvote.id));
+      orderByClause = desc(countDistinct(upvote.id));
       break;
     case "comments":
-      orderByClause = desc(count(comment.id));
+      orderByClause = desc(countDistinct(comment.id));
       break;
     default:
       orderByClause = desc(post.createdAt);
@@ -71,7 +77,7 @@ const Dashboard = async ({
             <div className="flex items-center gap-4">
               <Link
                 href="/dashboard/post/new"
-                className="inline-block bg-violet-600 py-2 px-3 text-sm rounded hover:bg-violet-500 transition-colors font-semibold">
+                className="inline-block bg-violet-600 py-2 px-3 text-sm rounded hover:bg-violet-500 transition-colors font-bold">
                 + New post
               </Link>
               <div className="hidden md:block">
@@ -83,6 +89,7 @@ const Dashboard = async ({
             <PostList posts={posts} tagParam={tagParam} />
           </ul>
         </div>
+        <TopButton />
       </div>
     </>
   );
