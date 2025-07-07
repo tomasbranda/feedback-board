@@ -10,6 +10,7 @@ export const auth = betterAuth({
     provider: "pg", // or "mysql", "sqlite"
     schema: schema,
   }),
+  trustedOrigins: ["http://localhost:3000", process.env.VERCEL_URL!],
   emailAndPassword: {
     enabled: true,
   },
