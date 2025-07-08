@@ -3,23 +3,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import TagsMenu from "./TagsMenu";
 import SignOutBtn from "./SignOutBtn";
-
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-  createdAt: Date;
-  status: "planned" | "ongoing" | "finished" | null;
-  author: {
-    id: string;
-    name: string;
-  } | null;
-  tag: {
-    name: string;
-  } | null;
-  upvoteCount: number;
-  commentCount: number;
-}
+import { Post } from "@/types/post";
 
 const DashboardHeader = ({ posts }: { posts: Post[] }) => {
   const [open, setOpen] = useState(false);

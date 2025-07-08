@@ -1,23 +1,7 @@
 import Link from "next/link";
 import ArrowIcon from "./ArrowIcon";
 import CommentIcon from "./CommentIcon";
-
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-  createdAt: Date;
-  status: "planned" | "ongoing" | "finished" | null;
-  author: {
-    id: string;
-    name: string;
-  } | null;
-  tag: {
-    name: string;
-  } | null;
-  upvoteCount: number;
-  commentCount: number;
-}
+import { Post } from "@/types/post";
 
 const RoadmapPost = ({ post, color }: { post: Post; color: string }) => {
   return (
