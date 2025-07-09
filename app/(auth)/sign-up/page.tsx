@@ -10,7 +10,12 @@ export default function SignUp() {
   const { data: session } = authClient.useSession();
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(signUp, {
-    error: null,
+    inputErrors: {
+      name: null,
+      email: null,
+      password: null,
+    },
+    authError: null,
     shouldRedirect: false,
   });
 
@@ -46,11 +51,20 @@ export default function SignUp() {
                     id="name"
                     name="name"
                     type="name"
-                    required
+                    defaultValue={state.inputData?.name}
                     autoComplete="name"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-violet-600 sm:text-sm/6"
+                    className={`block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-violet-600 sm:text-sm/6 ${
+                      state.inputErrors?.name
+                        ? "outline-1 outline-red-500"
+                        : "outline-none"
+                    }`}
                   />
                 </div>
+                {state.inputErrors?.name && (
+                  <p className="text-red-500 mt-2 font-semibold">
+                    {state.inputErrors.name}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -64,11 +78,20 @@ export default function SignUp() {
                     id="email"
                     name="email"
                     type="email"
-                    required
+                    defaultValue={state.inputData?.email}
                     autoComplete="email"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-violet-600 sm:text-sm/6"
+                    className={`block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-violet-600 sm:text-sm/6 ${
+                      state.inputErrors?.email
+                        ? "outline-1 outline-red-500"
+                        : "outline-none"
+                    }`}
                   />
                 </div>
+                {state.inputErrors?.email && (
+                  <p className="text-red-500 mt-2 font-semibold">
+                    {state.inputErrors.email}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -83,15 +106,23 @@ export default function SignUp() {
                     id="password"
                     name="password"
                     type="password"
-                    required
                     autoComplete="current-password"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-violet-600 sm:text-sm/6"
+                    className={`block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-violet-600 sm:text-sm/6 ${
+                      state.inputErrors?.password
+                        ? "outline-1 outline-red-500"
+                        : "outline-none"
+                    }`}
                   />
                 </div>
+                {state.inputErrors?.password && (
+                  <p className="text-red-500 mt-2 font-semibold">
+                    {state.inputErrors.password}
+                  </p>
+                )}
               </div>
-              {state.error && (
-                <p className="text-red-500 mt-2 font-semibold text-center">
-                  {state.error}
+              {state.authError && (
+                <p className="text-red-500 mt-2 font-semibold">
+                  {state.authError}
                 </p>
               )}
               <div>

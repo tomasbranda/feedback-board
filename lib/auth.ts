@@ -13,6 +13,7 @@ export const auth = betterAuth({
   trustedOrigins: ["http://localhost:3000", process.env.VERCEL_URL!],
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 6,
   },
   plugins: [nextCookies()],
 });

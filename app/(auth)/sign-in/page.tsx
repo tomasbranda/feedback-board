@@ -10,7 +10,7 @@ const SignIn = () => {
   const { data: session } = authClient.useSession();
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(signIn, {
-    error: null,
+    authError: null,
     shouldRedirect: false,
   });
 
@@ -70,9 +70,9 @@ const SignIn = () => {
                   />
                 </div>
               </div>
-              {state.error && (
-                <p className="text-red-500 mt-2 font-semibold text-center">
-                  {state.error}
+              {state.authError && (
+                <p className="text-red-500 mt-2 font-semibold">
+                  {state.authError}
                 </p>
               )}
               <div>
