@@ -21,7 +21,11 @@ const DashboardPost = ({ post }: { post: Post }) => {
 
       <div className="flex items-center gap-4 mt-4">
         <div className="bg-sky-100 rounded-xl py-1 px-2 flex items-center gap-2 w-fit">
-          <PostUpvotes postId={post.id} upvoteCount={post.upvoteCount} />
+          <PostUpvotes
+            postId={post.id}
+            upvoteCount={post.upvoteCount}
+            isUpvoted={post.isUpvoted ?? false}
+          />
         </div>
         {post.commentCount > 0 && (
           <span className="flex items-center gap-2 text-slate-600 font-semibold">

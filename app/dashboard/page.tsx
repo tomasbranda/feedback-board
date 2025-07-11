@@ -5,9 +5,12 @@ import DashboardHeader from "../components/DashboardHeader";
 import SignOutBtn from "../components/SignOutBtn";
 import { db } from "@/db/drizzle";
 import { comment, post, tag, upvote, user } from "@/db/schema";
-import { countDistinct, desc, eq } from "drizzle-orm";
+import { countDistinct, desc, eq, sql } from "drizzle-orm";
 import TopButton from "../components/TopButton";
 import { Metadata } from "next";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Dashboard | Feedback Board",
@@ -21,6 +24,16 @@ const Dashboard = async ({
     tag?: string;
   }>;
 }) => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
+
+  const currentUserId = session.user.id;
+
   const sortParam = (await searchParams).sort ?? "newest";
   const tagParam = (await searchParams).tag ?? "";
   let orderByClause;
@@ -58,6 +71,9 @@ const Dashboard = async ({
       },
       upvoteCount: countDistinct(upvote.id),
       commentCount: countDistinct(comment.id),
+      isUpvoted: sql<boolean>`
+      BOOL_OR(${upvote.userId} = ${session.user.id})
+    `,
     })
     .from(post)
     .leftJoin(user, eq(post.userId, user.id))

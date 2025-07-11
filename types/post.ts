@@ -13,4 +13,5 @@ export interface Post {
   } | null;
   upvoteCount: number;
   commentCount: number;
+  isUpvoted?: boolean;
 }

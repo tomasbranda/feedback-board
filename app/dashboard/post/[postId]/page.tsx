@@ -1,18 +1,17 @@
 import Comments from "@/app/components/Comments";
 import { db } from "@/db/drizzle";
 import { post, tag, upvote, user } from "@/db/schema";
-import { count, eq } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 import Link from "next/link";
 import ArrowIcon from "@/app/components/ArrowIcon";
 import PostUpvotes from "@/app/components/PostUpvotes";
-import { Suspense } from "react";
 import PromotePostBtn from "@/app/components/PromotePostBtn";
 import DemotePostBtn from "@/app/components/DemotePostBtn";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import DeletePostBtn from "@/app/components/DeletePostBtn";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Post | Feedback Board",
@@ -27,6 +26,10 @@ export default async function Post({
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
 
   const [postData] = await db
     .select({
@@ -43,6 +46,9 @@ export default async function Post({
         name: tag.name,
       },
       upvoteCount: count(upvote.id),
+      isUpvoted: sql<boolean>`
+            BOOL_OR(${upvote.userId} = ${session.user.id})
+          `,
     })
     .from(post)
     .leftJoin(user, eq(post.userId, user.id))
@@ -101,12 +107,11 @@ export default async function Post({
               {postData.tag?.name}
             </Link>
           </div>
-          <Suspense fallback={<p>Loading...</p>}>
-            <PostUpvotes
-              postId={postData.id}
-              upvoteCount={postData.upvoteCount}
-            />
-          </Suspense>
+          <PostUpvotes
+            postId={postData.id}
+            upvoteCount={postData.upvoteCount}
+            isUpvoted={postData.isUpvoted}
+          />
           <div className="flex items-center gap-4">
             {postData.status !== null && (
               <DemotePostBtn
